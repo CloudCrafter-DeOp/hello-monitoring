@@ -23,16 +23,20 @@ fi
 # переменные из конфига
 . "$CONFIG_FILE"
 
+# Время логов
 timestamp() {
   date +"%Y-%m-%d %H:%M:%S"
 }
 
+# как выглядит сама запись логов в наш log-файл
 log() {
   local level="$1"
   local msg="$2"
   echo "$(timestamp) [$level] $msg" >> "$LOG_FILE"
 }
 
+
+# Основная функция для проверки веб-приложение, проверяем по http-коду, если 200-й в нашем случае, то приложение работает и выводим просто инфо-лог, если же приложение недоступно, то перезапускаем через systemctl
 check_app() {
   local code
   code="$(curl -s -o /dev/null -w "%{http_code}" "$APP_URL" || echo "000")"
@@ -52,6 +56,7 @@ check_app() {
   fi
 }
 
+# проверка обновления скрипта мониторинга, в случае изменения версии на GitHub обновляем текущий скрипт, проверка происходит по version.txt 
 check_for_update() {
   if [[ -z "${UPDATE_BASE_URL:-}" || -z "${VERSION_FILE:-}" ]]; then
 	return 0
@@ -84,6 +89,8 @@ check_for_update() {
   fi
 }
 
+# проверка приложения
 check_app
 
+# проверка обновления
 check_for_update
