@@ -1,0 +1,7 @@
+[Unit]
+Description=Hello World app check live
+After=network-online.target hello-app.service
+
+[Service]
+Type=onshot
+ExecStart=/opt/hello-monitor/monitor/check_app.sh
